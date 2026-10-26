@@ -53,6 +53,38 @@ export type Database = {
         }
         Relationships: []
       }
+      todo_comments: {
+        Row: {
+          author: string
+          body: string
+          created_at: string
+          id: string
+          todo_id: string
+        }
+        Insert: {
+          author: string
+          body: string
+          created_at?: string
+          id?: string
+          todo_id: string
+        }
+        Update: {
+          author?: string
+          body?: string
+          created_at?: string
+          id?: string
+          todo_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "todo_comments_todo_id_fkey"
+            columns: ["todo_id"]
+            isOneToOne: false
+            referencedRelation: "todos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       todos: {
         Row: {
           area_id: string | null
