@@ -17,24 +17,67 @@ export function TodoPanel({ areaId }: { areaId?: string }) {
   const upd = useUpdateTodo();
   const del = useDeleteTodo();
   const addLogs = useAddLogs();
+  
   const [title, setTitle] = useState("");
   const [comment, setComment] = useState("");
   const [area, setArea] = useState(areaId ?? "");
   const [type, setType] = useState("");
   const [showDone, setShowDone] = useState(false);
 
+  // --- NYA STATES ---
+  const [filterType, setFilterType] = useState(""); // Håller koll på sorteringen
+  const [applyAllHoles, setApplyAllHoles] = useState(false); // Håller koll på "Alla hål"-checkboxen
+
   const areaName = (id: string | null) => areas.find((a) => a.id === id)?.name ?? "Hela banan";
-  const list = todos.filter((t) => (areaId ? t.area_id === areaId : true));
+  
+  // --- UPPDATERAD LOGIK FÖR ATT FILTRERA ---
+  const list = todos.filter((t) => {
+    const matchArea = areaId ? t.area_id === areaId : true;
+    const matchType = filterType ? t.work_type === filterType : true;
+    return matchArea && matchType;
+  });
+  
   const open = list.filter((t) => !t.done);
   const done = list.filter((t) => t.done);
 
+  // --- UPPDATERAD SKAPA-FUNKTION (ALLA HÅL) ---
   const create = async () => {
     if (!me) return toast.error("Välj vem du är högst upp först");
     if (!title.trim()) return;
-    await add.mutateAsync({ title: title.trim(), comment: comment.trim() || null, area_id: area || null, work_type: type || null, created_by: me });
-    setTitle(""); setComment(""); setType("");
+
+    if (applyAllHoles) {
+      // Filtrera ut alla områden som faktiskt är golfhål
+      const holeAreas = areas.filter((a) => a.kind === "hole");
+      
+      if (holeAreas.length === 0) return toast.error("Kunde inte hitta några hål");
+
+      // Skapa en array med promises för att skicka in allt samtidigt
+      const promises = holeAreas.map((hole) => 
+        add.mutateAsync({ 
+          title: title.trim(), 
+          comment: comment.trim() || null, 
+          area_id: hole.id, 
+          work_type: type || null, 
+          created_by: me 
+        })
+      );
+      
+      await Promise.all(promises);
+      toast.success(`Tillagd på ${holeAreas.length} hål!`);
+    } else {
+      // Skapa som vanligt för ett specifikt område
+      await add.mutateAsync({ 
+        title: title.trim(), 
+        comment: comment.trim() || null, 
+        area_id: area || null, 
+        work_type: type || null, 
+        created_by: me 
+      });
+      toast.success("Tillagd i att göra-listan");
+    }
+
+    setTitle(""); setComment(""); setType(""); setApplyAllHoles(false);
     if (!areaId) setArea("");
-    toast.success("Tillagd i att göra-listan");
   };
 
   const complete = async (t: Todo) => {
@@ -62,10 +105,35 @@ export function TodoPanel({ areaId }: { areaId?: string }) {
             {WORK_TYPES.map((w) => <option key={w}>{w}</option>)}
           </select>
         </div>
+        
         <div className="mt-2 flex gap-2">
           <Input className="h-11" placeholder="Kommentar (valfritt)" value={comment} onChange={(e) => setComment(e.target.value)} />
           <Button className="h-11" onClick={create} disabled={add.isPending}>Lägg till</Button>
         </div>
+
+        {/* --- NYTT: Checkbox för alla hål --- */}
+        {!areaId && (
+          <div className="mt-4 flex items-center gap-2 px-1">
+            <input 
+              type="checkbox" 
+              id="all-holes" 
+              className="h-4 w-4 cursor-pointer rounded border-muted-foreground accent-primary" 
+              checked={applyAllHoles} 
+              onChange={(e) => setApplyAllHoles(e.target.checked)} 
+            />
+            <label htmlFor="all-holes" className="cursor-pointer text-sm font-medium">
+              Lägg till på alla 18 hål
+            </label>
+          </div>
+        )}
+      </div>
+
+      {/* --- NYTT: Filter-dropdown ovanför listan --- */}
+      <div className="flex justify-end pt-2">
+        <select className={selectCls} value={filterType} onChange={(e) => setFilterType(e.target.value)}>
+          <option value="">Visa alla sysslor</option>
+          {WORK_TYPES.map((w) => <option key={w} value={w}>Visa endast {w}</option>)}
+        </select>
       </div>
 
       {open.length === 0 && <p className="py-6 text-center text-muted-foreground">Inget kvar att göra här 🎉</p>}
