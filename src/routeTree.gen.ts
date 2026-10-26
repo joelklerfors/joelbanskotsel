@@ -10,33 +10,73 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AttGoraRouteImport } from './routes/att-gora'
+import { Route as HistorikRouteImport } from './routes/historik'
+import { Route as PersonalRouteImport } from './routes/personal'
+import { Route as OmradeIdRouteImport } from './routes/omrade.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AttGoraRoute = AttGoraRouteImport.update({
+  id: '/att-gora',
+  path: '/att-gora',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HistorikRoute = HistorikRouteImport.update({
+  id: '/historik',
+  path: '/historik',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PersonalRoute = PersonalRouteImport.update({
+  id: '/personal',
+  path: '/personal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OmradeIdRoute = OmradeIdRouteImport.update({
+  id: '/omrade/$id',
+  path: '/omrade/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/att-gora': typeof AttGoraRoute
+  '/historik': typeof HistorikRoute
+  '/personal': typeof PersonalRoute
+  '/omrade/$id': typeof OmradeIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/att-gora': typeof AttGoraRoute
+  '/historik': typeof HistorikRoute
+  '/personal': typeof PersonalRoute
+  '/omrade/$id': typeof OmradeIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/att-gora': typeof AttGoraRoute
+  '/historik': typeof HistorikRoute
+  '/personal': typeof PersonalRoute
+  '/omrade/$id': typeof OmradeIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/att-gora' | '/historik' | '/personal' | '/omrade/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/att-gora' | '/historik' | '/personal' | '/omrade/$id'
+  id: '__root__' | '/' | '/att-gora' | '/historik' | '/personal' | '/omrade/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AttGoraRoute: typeof AttGoraRoute
+  HistorikRoute: typeof HistorikRoute
+  PersonalRoute: typeof PersonalRoute
+  OmradeIdRoute: typeof OmradeIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +88,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/att-gora': {
+      id: '/att-gora'
+      path: '/att-gora'
+      fullPath: '/att-gora'
+      preLoaderRoute: typeof AttGoraRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/historik': {
+      id: '/historik'
+      path: '/historik'
+      fullPath: '/historik'
+      preLoaderRoute: typeof HistorikRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/personal': {
+      id: '/personal'
+      path: '/personal'
+      fullPath: '/personal'
+      preLoaderRoute: typeof PersonalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/omrade/$id': {
+      id: '/omrade/$id'
+      path: '/omrade/$id'
+      fullPath: '/omrade/$id'
+      preLoaderRoute: typeof OmradeIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AttGoraRoute: AttGoraRoute,
+  HistorikRoute: HistorikRoute,
+  PersonalRoute: PersonalRoute,
+  OmradeIdRoute: OmradeIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
