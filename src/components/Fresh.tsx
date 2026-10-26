@@ -9,7 +9,7 @@ const styles = {
 };
 const dot = { fresh: "bg-fresh", aging: "bg-aging", stale: "bg-stale", never: "bg-muted-foreground/40" };
 
-export function FreshPill({ at, className }: { at?: string; className?: string }) {
+export function FreshPill({ at, className }: { at?: string | undefined; className?: string }) {
   const f = freshness(at);
   return (
     <span className={cn("inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold", styles[f], className)}>
@@ -19,7 +19,7 @@ export function FreshPill({ at, className }: { at?: string; className?: string }
   );
 }
 
-export function FreshDot({ at }: { at?: string }) {
+export function FreshDot({ at }: { at?: string | undefined }) {
   return <span className={cn("inline-block h-3 w-3 rounded-full", dot[freshness(at)])} />;
 }
 
