@@ -14,7 +14,130 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      areas: {
+        Row: {
+          id: string
+          kind: string
+          name: string
+          sort: number
+        }
+        Insert: {
+          id?: string
+          kind?: string
+          name: string
+          sort?: number
+        }
+        Update: {
+          id?: string
+          kind?: string
+          name?: string
+          sort?: number
+        }
+        Relationships: []
+      }
+      staff: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      todos: {
+        Row: {
+          area_id: string | null
+          comment: string | null
+          created_at: string
+          created_by: string
+          done: boolean
+          done_at: string | null
+          done_by: string | null
+          id: string
+          title: string
+          work_type: string | null
+        }
+        Insert: {
+          area_id?: string | null
+          comment?: string | null
+          created_at?: string
+          created_by: string
+          done?: boolean
+          done_at?: string | null
+          done_by?: string | null
+          id?: string
+          title: string
+          work_type?: string | null
+        }
+        Update: {
+          area_id?: string | null
+          comment?: string | null
+          created_at?: string
+          created_by?: string
+          done?: boolean
+          done_at?: string | null
+          done_by?: string | null
+          id?: string
+          title?: string
+          work_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "todos_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "areas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      work_logs: {
+        Row: {
+          area_id: string
+          comment: string | null
+          created_at: string
+          done_at: string
+          id: string
+          staff_name: string
+          work_type: string
+        }
+        Insert: {
+          area_id: string
+          comment?: string | null
+          created_at?: string
+          done_at?: string
+          id?: string
+          staff_name: string
+          work_type: string
+        }
+        Update: {
+          area_id?: string
+          comment?: string | null
+          created_at?: string
+          done_at?: string
+          id?: string
+          staff_name?: string
+          work_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_logs_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "areas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
